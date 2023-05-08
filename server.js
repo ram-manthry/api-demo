@@ -6,11 +6,6 @@ env.config();
 const server = express();
 server.use(express.json());
 
-const PORT = process.env.PORT;
-server.listen(PORT, () => {
-	console.log(`server starterd on port ${PORT}`);
-});
-
 let tasks = [];
 
 server.get('/tasks', (req, res) => {
@@ -92,4 +87,9 @@ server.patch('/tasks/:id', (req, res) => {
 	matchedTask.description = description ?? matchedTask.description;
 
 	res.send(matchedTask);
+});
+
+const PORT = process.env.PORT;
+server.listen(PORT, () => {
+	console.log(`server starterd on port ${PORT}`);
 });
