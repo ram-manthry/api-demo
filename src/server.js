@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
+import env from 'dotenv';
 
-const env = require('dotenv');
 env.config();
 
 const server = express();
