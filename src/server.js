@@ -7,7 +7,7 @@ env.config()
 const server = express()
 server.use(express.json())
 
-server.use('/', taskRoutes)
+server.use('/api/tasks', taskRoutes)
 
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => {
