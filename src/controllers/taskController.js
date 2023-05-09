@@ -1,13 +1,7 @@
-let tasks = [
-  {
-    id: 1,
-    name: 'Mission 01',
-    description: 'Chatbot',
-    isCompleted: false,
-  },
-]
+import * as taskService from '../services/taskService.js'
 
 export const getAllTasks = (req, res) => {
+  const tasks = taskService.getAllTasks()
   res.send(tasks)
 }
 
@@ -15,14 +9,7 @@ export const createOneTask = (req, res) => {
   const name = req.body.name
   const description = req.body.description
 
-  const newTask = {
-    id: tasks.length + 1,
-    name,
-    description,
-    isCompleted: false,
-  }
-
-  tasks.push(newTask)
+  const newTask = taskService.createOneTask(name, description)
 
   res.send(newTask)
 }
@@ -30,26 +17,27 @@ export const createOneTask = (req, res) => {
 export const getOneTask = (req, res) => {
   const taskId = parseInt(req.params.id)
 
-  const matchedTask = tasks.find((t) => t.id === taskId)
-
-  if (!matchedTask) {
-    res.status(404).send('Task not found')
+  try {
+    const matchedTask = taskService.getOneTask(taskId)
+    res.send(matchedTask)
+  } catch (e) {
+    res.status(404).send(e)
   }
-
-  res.send(matchedTask)
 }
 
 export const deleteTask = (req, res) => {
   const taskId = parseInt(req.params.id)
 
-  const matchedTask = tasks.find((t) => t.id === taskId)
-
-  if (!matchedTask) {
-    res.status(404).send('Task not found')
+  try {
+    const hasDeleted = taskService.deleteTask(taskId)
+    if (hasDeleted) {
+      res.send(`Task ${taskId} deleted successfully!`)
+    } else {
+      res.status(500, send(`Task ${taskId} deletion failed!`))
+    }
+  } catch (e) {
+    res.status(404).send(e)
   }
-
-  tasks = tasks.filter((t) => t.id !== taskId)
-  res.send(`Task ${taskId} deleted successfully!`)
 }
 
 export const updateTask = (req, res) => {
@@ -58,16 +46,16 @@ export const updateTask = (req, res) => {
   const name = req.body.name
   const description = req.body.description
 
-  const matchedTask = tasks.find((t) => t.id === taskId)
-
-  if (!matchedTask) {
-    res.status(404).send('Task not found')
+  try {
+    const updatedTask = taskService.updateTask({
+      id: taskId,
+      name,
+      description,
+    })
+    res.send(updatedTask)
+  } catch (e) {
+    res.status(404).send(e)
   }
-
-  matchedTask.name = name
-  matchedTask.description = description
-
-  res.send(matchedTask)
 }
 
 export const updateTaskPartial = (req, res) => {
@@ -76,14 +64,14 @@ export const updateTaskPartial = (req, res) => {
   const name = req.body.name
   const description = req.body.description
 
-  const matchedTask = tasks.find((t) => t.id === taskId)
-
-  if (!matchedTask) {
-    res.status(404).send('Task not found')
+  try {
+    const updatedTask = taskService.updateTaskPartial({
+      id: taskId,
+      name,
+      description,
+    })
+    res.send(updatedTask)
+  } catch (e) {
+    res.status(404).send(e)
   }
-
-  matchedTask.name = name ?? matchedTask.name
-  matchedTask.description = description ?? matchedTask.description
-
-  res.send(matchedTask)
 }
